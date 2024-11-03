@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Pet {
+  id              String    @id @default(uuid())
+  nome            String
+  especie         String
+  data_nascimento DateTime
+  descricao       String?
+  status          String
+  tamanho         String?
+  peso            Float?
+  personalidade   String?
+  adocoes         Adocao[]  // Relacionamento com Adocao
+  Foto_Pet       Foto_Pet[] // Relacionamento com Foto_Pet
+}
+
+model Adotante {
+  id        String     @id @default(uuid())
+  nome      String
+  sobrenome String
+  email     String     @unique
+  password  String     // Campo de senha para login
+  telefone  String
+  enderecos Endereco[] // Relacionamento com Endereco
+  adocoes   Adocao[]   // Relacionamento com Adocao
+}
+
+model Endereco {
+  id                 String   @id @default(uuid())
+  adotanteId         String
+  rua                String
+  bairro             String
+  cidade             String
+  numero_residencia  String
+  adotante           Adotante @relation(fields: [adotanteId], references: [id])
+}
+
+model Adocao {
+  id          String    @id @default(uuid())
+  petId       String
+  adotanteId  String
+  data_adocao DateTime
+  pet         Pet       @relation(fields: [petId], references: [id])       // Relacionamento com Pet
+  adotante    Adotante  @relation(fields: [adotanteId], references: [id])  // Relacionamento com Adotante
+}
+
+model Foto_Pet {
+  id      String   @id @default(uuid())
+  petId   String
+  url     String   // URL da foto
+  pet     Pet      @relation(fields: [petId], references: [id]) // Relacionamento com Pet
+}
