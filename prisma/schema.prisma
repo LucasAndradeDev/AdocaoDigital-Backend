@@ -38,6 +38,7 @@ model Adotante {
   enderecos      Endereco[] // Relacionamento com Endereco
   adocoes        Adocao[]   // Relacionamento com Adocao
   data_registro  DateTime   @default(now()) // Data de registro do adotante
+  numero_adocoes Int        @default(0) // Valor padrão inicial como 0. O limite sera 3 adoções por ano.
 }
 
 

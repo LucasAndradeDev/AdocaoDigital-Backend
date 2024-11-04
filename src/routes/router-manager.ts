@@ -15,6 +15,9 @@ import  getAllPet from "../routes/pet/get-all-pet.route";
 import  deletePet from "../routes/pet/delete-pet.route";
 import  updatePet from "../routes/pet/update-pet.route";
 
+// Rotas para adocão
+import  createAdocao from "../routes/adocao/create-adocao.route";
+
 
 const router = Router();
 
@@ -35,6 +38,9 @@ router.use("/pet", getPetById); // Pegar dados de um pet por ID
 router.use("/pets", getAllPet); // Pegar todos os pets
 router.use("/pet", deletePet); // Deletar um pet
 router.use("/pet", updatePet); // Atualizar um pet
+
+// Rotas para adocão
+router.use("/adocao", createAdocao);
 
 
 export default router;

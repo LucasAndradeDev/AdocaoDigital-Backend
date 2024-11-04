@@ -1,11 +1,6 @@
-// Service para obter um adotante
-
-// Importar o Prisma client
 import { prisma } from "../../database/prisma-client";
-// Importar o tipo Adotante do Prisma
 import type { Adotante } from "@prisma/client";
 
-// Função para obter um adotante
 export async function GetAdotante(id: string): Promise<Adotante | null> {
     try {
         // Busca o adotante no banco de dados
@@ -21,6 +16,28 @@ export async function GetAdotante(id: string): Promise<Adotante | null> {
                         bairro: true,
                         cidade: true,
                         numero_residencia: true
+                    }
+                },
+                adocoes: {
+                    select: {
+                        id: true,
+                        pet: {  // Busca os dados do pet associado ao adotante
+                            select: {
+                                nome: true,
+                                especie: true,
+                                data_nascimento: true,
+                                descricao: true,
+                                tamanho: true,
+                                status: true,
+                                peso: true,
+                                personalidade: true,
+                                Foto_Pet: {  
+                                    select: {
+                                        url: true
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
