@@ -44,7 +44,10 @@ router.use("/pet", deletePet); // Deletar um pet
 router.use("/pet", updatePet); // Atualizar um pet
 
 // Rotas para adocão
-router.use("/adocao", createAdocao);
-
+router.use("/adocao", createAdocao); // Criar uma adocão
+router.use("/adocao", getAdocaoById); // Obter adocão pelo ID
+router.use("/adocoes", listAdocoes); // Obter todas as adocões
+router.use("/adocao", deleteAdocao); // Deletar uma adocão
+router.use("/adocao", updateAdocao); // Atualizar uma adocão
 
 export default router;
