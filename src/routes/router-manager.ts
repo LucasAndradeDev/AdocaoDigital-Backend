@@ -17,10 +17,10 @@ import  updatePet from "../routes/pet/update-pet.route";
 
 // Rotas para adocão
 import  createAdocao from "../routes/adocao/create-adocao.route";
-import  getAdocaoById from "../routes/adocao/get-adocao-by-id.route.ts";
-import  listAdocoes from "../routes/adocao/list-adocoes.route.ts";
-import  deleteAdocao from "../routes/adocao/delete-adocao.route.ts";
-import  updateAdocao from "../routes/adocao/update-adocao.route.ts";
+import  GetAdocaoById from "../routes/adocao/get-adocao-by-id.route.ts";
+import  ListAdocoes from "../routes/adocao/list-adocoes.route.ts";
+import  DeleteAdocao from "../routes/adocao/delete-adocao.route.ts";
+import  UpdateAdocao from "../routes/adocao/update-adocao.route.ts";
 
 
 const router = Router();
