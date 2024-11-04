@@ -7,30 +7,39 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum StatusPet {
+  DISPONIVEL
+  ADOTADO
+}
+
+
 model Pet {
   id              String    @id @default(uuid())
   nome            String
   especie         String
   data_nascimento DateTime
   descricao       String?
-  status          String
   tamanho         String?
+  status          StatusPet  @default(DISPONIVEL) 
   peso            Float?
   personalidade   String?
   adocoes         Adocao[]  // Relacionamento com Adocao
-  Foto_Pet       Foto_Pet[] // Relacionamento com Foto_Pet
+  Foto_Pet        Foto_Pet[] // Relacionamento com Foto_Pet
 }
 
+
 model Adotante {
-  id        String     @id @default(uuid())
-  nome      String
-  sobrenome String
-  email     String     @unique
-  password  String     // Campo de senha para login
-  telefone  String
-  enderecos Endereco[] // Relacionamento com Endereco
-  adocoes   Adocao[]   // Relacionamento com Adocao
+  id             String     @id @default(uuid())
+  nome           String
+  sobrenome      String
+  email          String     @unique
+  password       String     // Campo de senha para login
+  telefone       String
+  enderecos      Endereco[] // Relacionamento com Endereco
+  adocoes        Adocao[]   // Relacionamento com Adocao
+  data_registro  DateTime   @default(now()) // Data de registro do adotante
 }
+
 
 model Endereco {
   id                 String   @id @default(uuid())
@@ -42,14 +51,23 @@ model Endereco {
   adotante           Adotante @relation(fields: [adotanteId], references: [id])
 }
 
+enum StatusAdocao {
+  PENDENTE
+  APROVADA
+  REJEITADA
+}
+
+
 model Adocao {
-  id          String    @id @default(uuid())
+  id          String         @id @default(uuid())
   petId       String
   adotanteId  String
-  data_adocao DateTime
-  pet         Pet       @relation(fields: [petId], references: [id])       // Relacionamento com Pet
-  adotante    Adotante  @relation(fields: [adotanteId], references: [id])  // Relacionamento com Adotante
+  data_adocao DateTime       @default(now()) // Registro automático da data de adoção
+  status      StatusAdocao   @default(PENDENTE) // Status padrão da adoção
+  pet         Pet            @relation(fields: [petId], references: [id])       // Relacionamento com Pet
+  adotante    Adotante       @relation(fields: [adotanteId], references: [id])  // Relacionamento com Adotante
 }
+
 
 model Foto_Pet {
   id      String   @id @default(uuid())

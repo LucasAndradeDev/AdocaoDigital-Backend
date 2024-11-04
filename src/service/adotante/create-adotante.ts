@@ -1,8 +1,8 @@
 // Service para criar um adotante
 import { prisma } from "../../database/prisma-client";
 import type { Adotante } from "@prisma/client";
-import bcrypt from "bcrypt";
-import crypto from "node:crypto"; // Importar o módulo crypto
+import bcrypt from "bcrypt"; // Lib para criptografia de senhas
+import crypto from "node:crypto"; // Lib para gerar ids unicos e aleatórios
 
 // Interface para os dados do adotante
 interface EnderecoProps {

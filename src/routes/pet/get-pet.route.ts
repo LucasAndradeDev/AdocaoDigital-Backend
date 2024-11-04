@@ -1,33 +1,35 @@
+// Rota para obter um pet
+
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { z } from "zod";
-import { GetAdotante } from "../../service/adotante/get-adotante"; // Importa a função de obter adotante
+import { GetPetById } from "../../service/pet/get-pet"; // Importa a função de obter pet
 
 const router = Router();
 
-// Rota para obter um adotante
+// Rota para obter um pet
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 router.get("/:id", async (req: Request, res: Response): Promise<any> => {
     try {
         // Schema de validação dos dados
-        const getAdotanteSchema = z.object({
+        const getPetSchema = z.object({
             id: z.string().min(1, 'ID é obrigatório'),
         });
 
         // Validação dos dados recebidos
-        const { id } = getAdotanteSchema.parse(req.params);
+        const { id } = getPetSchema.parse(req.params);
 
-        // Obter um adotante
-        const adotante = await GetAdotante(id);
+        // Obter um pet
+        const pet = await GetPetById(id);
 
-        if (!adotante) {
+        if (!pet) {
             return res.status(404).json({
-                error: "Adotante não encontrado"    
+                error: "Pet não encontrado"    
             });
         }
 
         return res.status(200).json({
-            "Dados do Adotante": adotante
+            "Dados do Pet": pet
         });
     } catch (error) {
         // Tratamento específico para erros de validação do Zod
@@ -38,11 +40,9 @@ router.get("/:id", async (req: Request, res: Response): Promise<any> => {
             });
         }
 
-        // Log do erro para debug
-        console.error('Erro ao obter adotante:', error);
-
+        // Retorna um erro genérico do servidor
         return res.status(500).json({
-            error: "Erro interno do servidor",
+            error: "Erro interno do servidor"
         });
     }
 });

@@ -6,8 +6,15 @@ import  createAdotante from "../routes/adotante/create-adotante.route";
 import  getAdotante from "../routes/adotante/get-adotante.route";
 import  updateAdotante from "../routes/adotante/update-adotante.route";
 import  deleteAdotante from "../routes/adotante/delete-adotante.route";
+import  loginAdotante from "../routes/adotante/login-adotante.route";
 
-// As rotas dos pets serão implementadas futuramente
+// Rotas de pets
+import  createPet from "../routes/pet/create-pet.route";
+import  getPetById from "../routes/pet/get-pet.route";
+import  getAllPet from "../routes/pet/get-all-pet.route";
+import  deletePet from "../routes/pet/delete-pet.route";
+import  updatePet from "../routes/pet/update-pet.route";
+
 
 const router = Router();
 
@@ -15,9 +22,19 @@ router.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
+// Rotas adotantes
 router.use("/adotante", createAdotante); // Criar um adotante
 router.use("/adotante", getAdotante); // Obter um adotante
 router.use("/adotante", updateAdotante); // Atualizar um adotante
 router.use("/adotante", deleteAdotante); // Deletar um adotante
+router.use("/adotante/login", loginAdotante); // Login de adotante
+
+// Rotas pets
+router.use("/pet", createPet); // Criar um pet
+router.use("/pet", getPetById); // Pegar dados de um pet por ID
+router.use("/pets", getAllPet); // Pegar todos os pets
+router.use("/pet", deletePet); // Deletar um pet
+router.use("/pet", updatePet); // Atualizar um pet
+
 
 export default router;
