@@ -19,6 +19,9 @@ router.delete("/:id", async (req: Request, res: Response): Promise<any> => {
         // Validação dos dados recebidos
         const { id } = deletePetSchema.parse(req.params);
 
+        //Deparação dos dados
+        console.log("ID do pet a ser deletado:", id);
+
         // Deletar um pet
         const pet = await DeletePet(id);
 

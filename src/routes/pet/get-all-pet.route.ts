@@ -1,5 +1,3 @@
-// Rota para obter todos os pets
-
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { z } from "zod";    
@@ -7,48 +5,66 @@ import { GetAllPet } from "../../service/pet/get-all-pet"; // Importa a função
 
 const router = Router();
 
-// Rota para obter todos os pets
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-router.get("/", async (req: Request, res: Response): Promise<any> => {
+// Definir schema de validação com Zod
+const getAllPetSchema = z.object({
+    nome: z.string().optional(),
+    especie: z.string().optional(),
+    status: z.enum(["ADOTADO", "DISPONIVEL"]).optional(),
+    tamanho: z.string().optional(),
+    personalidade: z.string().optional(),
+    idadeMin: z.coerce.number().optional(),  // Coerce para converter para number
+    idadeMax: z.coerce.number().optional(),  
+    pesoMin: z.coerce.number().optional(),  // Coerce para converter para number
+    pesoMax: z.coerce.number().optional(),
+});
+
+// Inferir tipo para os filtros a partir do schema
+type GetAllPetFilters = z.infer<typeof getAllPetSchema>;
+
+router.get("/", async (req: Request, res: Response): Promise<void> => {
     try {
-        // Schema de validação dos dados
-        const getAllPetSchema = z.object({});
+        // Validação dos dados na query string
+        const filters: GetAllPetFilters = getAllPetSchema.parse(req.query);
 
-        // Validação dos dados recebidos
-        // biome-ignore lint/correctness/noEmptyPattern: <explanation>
-                const { } = getAllPetSchema.parse(req.params);
+        // Depuração dos filtros
+        console.log("Filtros recebidos:", filters);
 
-        // Obter todos os pets
-        const pets = await GetAllPet();
+        // Depuração do filtro de peso
+        console.log("Peso min e max:", filters.pesoMin, filters.pesoMax);
 
-        if (!pets) {
-            return res.status(404).json({
-                error: "Pets não encontrados"    
+
+        // Obter todos os pets aplicando os filtros
+        const pets = await GetAllPet(filters);
+
+        // Verifica se nenhum pet foi encontrado
+        if (!pets || pets.length === 0) {
+            res.status(404).json({
+                error: "Nenhum pet encontrado com os filtros fornecidos",
             });
+            return;
         }
 
-        // Depuração dos dados
-        console.log("Pets:", pets);
-
-        return res.status(200).json({
-            "Pets": pets
+        // Retornar os pets encontrados
+        res.status(200).json({
+            pets,
         });
     } catch (error) {
         // Tratamento específico para erros de validação do Zod
         if (error instanceof z.ZodError) {
-            return res.status(400).json({
-                error: "Dados inválidos, verifique os dados e tente novamente.",
-                details: error.errors
+            res.status(400).json({
+                error: "Dados inválidos, verifique os filtros e tente novamente.",
+                details: error.errors,
             });
+            return;
         }
 
         // Log do erro para debug
         console.error('Erro ao obter pets:', error);
 
-        return res.status(500).json({
-            error: "Erro interno do servidor"
+        res.status(500).json({
+            error: "Erro interno do servidor",
         });
     }
 });
- 
+
 export default router;

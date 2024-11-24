@@ -16,7 +16,7 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
             especie: z.string().min(1, 'Espécie é obrigatória'),
             dataNascimento: z.string().min(1, 'Data de nascimento é obrigatória'),
             descricao: z.string().optional(),
-            status: z.enum(['ADOTADO', 'DISPONIVEL'], { errorMap: () => ({ message: 'Status inválido' }) }),
+            status: z.enum(['ADOTADO', 'DISPONIVEL'], { errorMap: () => ({ message: 'Status inválido' }) }).optional(),
             tamanho: z.string().optional(),
             peso: z.number().optional(),
             personalidade: z.string().optional(),

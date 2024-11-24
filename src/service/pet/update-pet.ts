@@ -1,7 +1,6 @@
 // Service para atualizar um pet
-
-import { prisma } from "../../database/prisma-client";
-import type { Pet , StatusPet } from "@prisma/client";
+import { prisma } from "../../database/prisma-client"; // Importar o Prisma client
+import type { Pet, StatusPet } from "@prisma/client"; // Importar o tipo Pet do Prisma
 
 // Interface para os dados do pet
 interface UpdatePetData {
@@ -18,16 +17,43 @@ interface UpdatePetData {
 }
 
 // Função para atualizar um pet
-export async function UpdatePet({ id, nome, especie, data_nascimento, descricao, status, tamanho, peso, personalidade, Foto_Pet }: UpdatePetData): Promise<Pet | null> {
+export async function UpdatePet({
+    id,
+    nome,
+    especie,
+    data_nascimento,
+    descricao,
+    status,
+    tamanho,
+    peso,
+    personalidade,
+    Foto_Pet
+}: UpdatePetData): Promise<Pet | string | null> {
     // Verifica se o pet existe
     const pet = await prisma.pet.findUnique({
         where: {
             id
+        },
+        include: {
+            Foto_Pet: true
         }
     });
 
     if (!pet) {
         return null; // Retorna null se o pet não existir
+    }
+
+    // Verifica se há URLs duplicadas
+    if (Foto_Pet) {
+        const existingUrls = pet.Foto_Pet.map(foto => foto.url); // URLs existentes no banco
+        const newUrls = Foto_Pet.map(foto => foto.url); // URLs fornecidas no body
+
+        // Filtra URLs duplicadas
+        const duplicateUrls = newUrls.filter(url => url && existingUrls.includes(url));
+
+        if (duplicateUrls.length > 0) {
+            return `As seguintes URLs já existem: ${duplicateUrls.join(", ")}`;
+        }
     }
 
     // Atualiza os dados do pet
@@ -45,12 +71,15 @@ export async function UpdatePet({ id, nome, especie, data_nascimento, descricao,
             peso,
             personalidade,
             Foto_Pet: {
-                create: Foto_Pet?.filter(foto => foto.url !== undefined) // Filtra fotos com url definido
-                .map(foto => ({
-                    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                    url: foto.url! // Aqui podemos usar a asserção de não-nulo
-                })) || []
+                create: Foto_Pet?.filter(foto => foto.url !== undefined) // Filtra fotos válidas
+                    .map(foto => ({
+                        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                        url: foto.url! // Asserção de não-nulo
+                    })) || []
             }
+        },
+        include: {
+            Foto_Pet: true
         }
     });
 

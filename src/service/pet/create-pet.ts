@@ -9,7 +9,7 @@ interface CreatePetProps {
     especie: string;
     dataNascimento: Date;
     descricao?: string;
-    status: StatusPet;
+    status: StatusPet | undefined;
     tamanho?: string;
     peso?: number;
     personalidade?: string;

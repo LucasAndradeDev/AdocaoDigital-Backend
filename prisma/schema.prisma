@@ -12,6 +12,11 @@ enum StatusPet {
   ADOTADO
 }
 
+enum Tamanho {
+  PEQUENO
+  MEDIO
+  GRANDE
+}
 
 model Pet {
   id              String    @id @default(uuid())
@@ -19,7 +24,7 @@ model Pet {
   especie         String
   data_nascimento DateTime
   descricao       String?
-  tamanho         String?
+  tamanho         Tamanho  
   status          StatusPet  @default(DISPONIVEL) 
   peso            Float?
   personalidade   String?
@@ -65,7 +70,7 @@ model Adocao {
   adotanteId  String
   data_adocao DateTime       @default(now()) // Registro automático da data de adoção
   status      StatusAdocao   @default(PENDENTE) // Status padrão da adoção
-  pet         Pet            @relation(fields: [petId], references: [id])       // Relacionamento com Pet
+  pet         Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)       // Relacionamento com Pet
   adotante    Adotante       @relation(fields: [adotanteId], references: [id])  // Relacionamento com Adotante
 }
 
@@ -74,5 +79,5 @@ model Foto_Pet {
   id      String   @id @default(uuid())
   petId   String
   url     String   // URL da foto
-  pet     Pet      @relation(fields: [petId], references: [id]) // Relacionamento com Pet
+  pet     Pet      @relation(fields: [petId], references: [id] , onDelete: Cascade) // Relacionamento com Pet
 }
