@@ -16,8 +16,16 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
             nome: z.string().min(1, 'Nome é obrigatório').optional(),
             sobrenome: z.string().min(1, 'Sobrenome é obrigatório').optional(),
             email: z.string().email('Email inválido').optional(),
-            password: z.string().min(8, 'Senha é obrigatória').optional(),
-            telefone: z.string().min(1, 'Telefone é obrigatório').optional(),
+            password: z.string()
+                .min(8, 'A senha deve ter pelo menos 8 caracteres')
+                .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
+                .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula')
+                .regex(/[0-9]/, 'A senha deve conter pelo menos um número')
+                .regex(/[@$!%*?&]/, 'A senha deve conter pelo menos um caractere especial').optional(),
+            telefone: z.string().regex(
+                /^(?:\(\d{2}\)\s?)?\d{5}-\d{4}$/,
+                'Telefone inválido. O formato deve ser (XX) XXXXX-XXXX ou XXXXX-XXXX.'
+            ).optional(),
             endereco: z.object({
                 id: z.string().min(1, 'ID do endereço é obrigatório').optional(),
                 rua: z.string().min(1, 'Rua é obrigatória').optional(),
@@ -46,19 +54,30 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
             adotante
         });
     } catch (error) {
-        // Tratamento específico para erros de validação do Zod
+        // Tratamento para erros de validação do Zod
         if (error instanceof z.ZodError) {
+            // Mapeando erros para mensagens amigáveis
+            const formattedErrors = error.errors.map((err) => ({
+                campo: err.path.join('.'),
+                mensagem: err.message,
+            }));
+    
             return res.status(400).json({
-                error: "Dados inválidos, verifique os dados e tente novamente.",
-                details: error.errors
+                error: "Dados inválidos, verifique os erros abaixo.",
+                detalhes: formattedErrors,
             });
         }
-
-        // Log do erro para debug
-        console.error('Erro ao atualizar adotante:', error);
-        
+    
+        // Tratamento para outros erros (como duplicação de e-mail)
+        if ((error as { code: string }).code === 'P2002') { // Prisma Unique Constraint Error
+            return res.status(409).json({
+                error: "O e-mail fornecido já está em uso. Tente novamente com outro.",
+            });
+        }
+    
+        // Tratamento genérico para outros erros inesperados
         return res.status(500).json({
-            error: "Erro interno do servidor"
+            error: "Erro interno no servidor. Por favor, tente novamente mais tarde.",
         });
     }
 });

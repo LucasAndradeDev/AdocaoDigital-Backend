@@ -10,7 +10,7 @@ const getAllPetSchema = z.object({
     nome: z.string().optional(),
     especie: z.string().optional(),
     status: z.enum(["ADOTADO", "DISPONIVEL"]).optional(),
-    tamanho: z.string().optional(),
+    tamanho: z.enum(["PEQUENO", "MEDIO", "GRANDE"]).optional(),
     personalidade: z.string().optional(),
     idadeMin: z.coerce.number().optional(),  // Coerce para converter para number
     idadeMax: z.coerce.number().optional(),  
@@ -25,13 +25,6 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
     try {
         // Validação dos dados na query string
         const filters: GetAllPetFilters = getAllPetSchema.parse(req.query);
-
-        // Depuração dos filtros
-        console.log("Filtros recebidos:", filters);
-
-        // Depuração do filtro de peso
-        console.log("Peso min e max:", filters.pesoMin, filters.pesoMax);
-
 
         // Obter todos os pets aplicando os filtros
         const pets = await GetAllPet(filters);

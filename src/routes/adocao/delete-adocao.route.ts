@@ -5,7 +5,8 @@ import { DeleteAdocao } from "../../service/adocao/delete-adocao";
 
 const router = Router();
 
-router.delete("/:id", async (req: Request, res: Response) => {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+router.delete("/:id", async (req: Request, res: Response): Promise<any> => {
     try {
         const idSchema = z.string().min(1, "ID de adoção é obrigatório");
         const adocaoId = idSchema.parse(req.params.id);
@@ -21,6 +22,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
                 details: error.errors,
             });
         }
+        
 
         console.error('Erro ao excluir adoção:', error);
         return res.status(500).json({

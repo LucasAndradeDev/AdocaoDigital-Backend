@@ -12,6 +12,7 @@ enum StatusPet {
   ADOTADO
 }
 
+// Opcões de tamanho
 enum Tamanho {
   PEQUENO
   MEDIO
@@ -54,7 +55,7 @@ model Endereco {
   bairro             String
   cidade             String
   numero_residencia  String
-  adotante           Adotante @relation(fields: [adotanteId], references: [id])
+  adotante           Adotante @relation(fields: [adotanteId], references: [id], onDelete: Cascade)
 }
 
 enum StatusAdocao {
@@ -71,7 +72,7 @@ model Adocao {
   data_adocao DateTime       @default(now()) // Registro automático da data de adoção
   status      StatusAdocao   @default(PENDENTE) // Status padrão da adoção
   pet         Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)       // Relacionamento com Pet
-  adotante    Adotante       @relation(fields: [adotanteId], references: [id])  // Relacionamento com Adotante
+  adotante    Adotante       @relation(fields: [adotanteId], references: [id], onDelete: Cascade)  // Relacionamento com Adotante
 }
 
 

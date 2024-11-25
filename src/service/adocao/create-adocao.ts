@@ -1,5 +1,5 @@
 import { prisma } from "../../database/prisma-client";
-import type { Adocao, StatusAdocao } from "@prisma/client";
+import type { StatusAdocao } from "@prisma/client";
 
 interface CreateAdocaoProps {
     petId: string;
@@ -8,38 +8,50 @@ interface CreateAdocaoProps {
     status: StatusAdocao;
 }
 
-async function AdotanteExists(adotanteId: string) {
+// Valida existência do adotante
+async function validarAdotanteExiste(adotanteId: string) {
     const adotante = await prisma.adotante.findUnique({
         where: { id: adotanteId }
     });
-    if (!adotante) throw new Error("Adotante inexistente, tente novamente");
+    if (!adotante) throw new Error("Adotante não existe");
     return adotante;
 }
 
-async function AdotantePodeAdotar(adotanteId: string) {
+// Verifica se adotante pode adotar (máximo 3 pets)
+async function validarAdotantePodeAdotar(adotanteId: string) {
     const adotante = await prisma.adotante.findUnique({
         where: { id: adotanteId }
     });
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    if (adotante!.numero_adocoes >= 3) {
-        throw new Error("Adotante já adotou 3 pets, tente novamente");
+    if (!adotante || adotante.numero_adocoes >= 3) {
+        throw new Error("Adotante já adotou 3 pets");
     }
 }
 
-async function PetExists(petId: string) {
+// Valida existência do pet
+async function validarPetExiste(petId: string) {
     const pet = await prisma.pet.findUnique({
         where: { id: petId }
     });
-    if (!pet) throw new Error("Pet inexistente, tente novamente");
+    if (!pet) throw new Error("Pet não existe");
+    return pet;
 }
 
-async function PetDisponivel(petId: string) {
+// Verifica se o pet está disponível
+async function validarPetDisponivel(petId: string) {
     const pet = await prisma.pet.findUnique({
         where: { id: petId }
     });
     if (pet?.status !== "DISPONIVEL") {
-        throw new Error("Pet já adotado, procure outro pet");
+        throw new Error("Pet não está disponível para adoção");
     }
+}
+
+// Verifica se adotante já adotou este pet
+async function validarNaoAdotadoAnteriormente(petId: string, adotanteId: string) {
+    const adocaoExistente = await prisma.adocao.findFirst({
+        where: { petId, adotanteId }
+    });
+    if (adocaoExistente) throw new Error("Adotante já adotou este pet");
 }
 
 export async function CreateAdocao({
@@ -47,16 +59,18 @@ export async function CreateAdocao({
     adotanteId,
     data_adocao,
     status
-}: CreateAdocaoProps): Promise<object | null> {
-    try {
-        // Validações
-        await PetExists(petId);
-        await PetDisponivel(petId);
-        const adotante = await AdotanteExists(adotanteId);
-        await AdotantePodeAdotar(adotanteId);
+}: CreateAdocaoProps) {
+    // Usa transação de banco de dados para operações atômicas
+    return prisma.$transaction(async (tx) => {
+        // Valida todas as condições antes de prosseguir
+        await validarPetExiste(petId);
+        await validarPetDisponivel(petId);
+        const adotante = await validarAdotanteExiste(adotanteId);
+        await validarAdotantePodeAdotar(adotanteId);
+        await validarNaoAdotadoAnteriormente(petId, adotanteId);
 
-        // Criação da adoção
-        const adocao = await prisma.adocao.create({
+        // Cria registro de adoção
+        const adocao = await tx.adocao.create({
             data: {
                 petId,
                 adotanteId,
@@ -65,24 +79,24 @@ export async function CreateAdocao({
             }
         });
 
-        // Atualiza o status do pet para "ADOTADO"
-        const petAtualizado = await prisma.pet.update({
+        // Atualiza status do pet
+        const petAtualizado = await tx.pet.update({
             where: { id: petId },
             data: { status: "ADOTADO" }
         });
 
-        // Incrementa o número de adoções do adotante
-        const adotanteAtualizado = await prisma.adotante.update({
+        // Atualiza contagem de adoções do adotante
+        const adotanteAtualizado = await tx.adotante.update({
             where: { id: adotanteId },
             data: { numero_adocoes: adotante.numero_adocoes + 1 }
         });
 
-        // Retorno detalhado do JSON
+        // Retorna informações detalhadas da adoção
         return {
-            message: "Adoção realizada com sucesso!",
+            mensagem: "Adoção realizada com sucesso!",
             adocao: {
                 id: adocao.id,
-                data_adocao: adocao.data_adocao,
+                dataAdocao: adocao.data_adocao,
                 status: adocao.status
             },
             adotante: {
@@ -90,13 +104,13 @@ export async function CreateAdocao({
                 nome: adotanteAtualizado.nome,
                 sobrenome: adotanteAtualizado.sobrenome,
                 email: adotanteAtualizado.email,
-                numero_adocoes: adotanteAtualizado.numero_adocoes
+                numeroAdocoes: adotanteAtualizado.numero_adocoes
             },
             pet: {
                 id: petAtualizado.id,
                 nome: petAtualizado.nome,
                 especie: petAtualizado.especie,
-                data_nascimento: petAtualizado.data_nascimento,
+                dataNascimento: petAtualizado.data_nascimento,
                 descricao: petAtualizado.descricao,
                 tamanho: petAtualizado.tamanho,
                 status: petAtualizado.status,
@@ -104,8 +118,5 @@ export async function CreateAdocao({
                 personalidade: petAtualizado.personalidade
             }
         };
-    } catch (error) {
-        console.error("Erro ao criar adoção:", error);
-        throw error;
-    }
+    });
 }

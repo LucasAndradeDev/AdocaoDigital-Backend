@@ -24,17 +24,6 @@ interface CreateAdotanteProps {
 // Função para criar um adotante
 export async function CreateAdotante({ nome, sobrenome, email, password, telefone, endereco }: CreateAdotanteProps): Promise<Adotante> {
 
-    // Verifica se o email ja existe
-    const emailExists = await prisma.adotante.findUnique({
-        where: {
-            email
-        }
-    });
-
-    if (emailExists) {
-        throw new Error("Email ja existe, tente novamente");
-    }
-
 
 
     // Hash da senha
