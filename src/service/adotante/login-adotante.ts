@@ -15,7 +15,40 @@ export async function LoginAdotante({ email, password }: LoginAdotanteProps): Pr
 
     // Verifica se o email existe
     const adotanteExists = await prisma.adotante.findUnique({
-        where: { email }
+        where: { email },
+        include: {
+            enderecos: {
+                select: {
+                    id: true,
+                    rua: true,
+                    bairro: true,
+                    cidade: true,
+                    numero_residencia: true
+                }
+            },
+            adocoes: {
+                select: {
+                    id: true,
+                    pet: {  // Busca os dados do pet associado ao adotante
+                        select: {
+                            nome: true,
+                            especie: true,
+                            data_nascimento: true,
+                            descricao: true,
+                            tamanho: true,
+                            status: true,
+                            peso: true,
+                            personalidade: true,
+                            Foto_Pet: {  
+                                select: {
+                                    url: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     });
 
     if (!adotanteExists) {

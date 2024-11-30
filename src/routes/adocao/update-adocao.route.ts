@@ -5,7 +5,8 @@ import { UpdateAdocao } from "../../service/adocao/update-adocao";
 
 const router = Router();
 
-router.put("/:id", async (req: Request, res: Response) => {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+router.put("/:id", async (req: Request, res: Response): Promise<any> => {
     try {
         const idSchema = z.string().min(1, "ID de adoção é obrigatório");
         const adocaoId = idSchema.parse(req.params.id);

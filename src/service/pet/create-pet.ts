@@ -1,6 +1,6 @@
 // Service para cadastrar um pet
 import { prisma } from "../../database/prisma-client";
-import type { Pet , StatusPet } from "@prisma/client";
+import type { Pet , StatusPet, Tamanho } from "@prisma/client";
 import crypto from "node:crypto";
 
 // Interface para os dados do pet
@@ -10,13 +10,15 @@ interface CreatePetProps {
     dataNascimento: Date;
     descricao?: string;
     status: StatusPet | undefined;
-    tamanho?: string;
+    tamanho?: Tamanho;
     peso?: number;
     personalidade?: string;
     Foto_Pet?: {
         url: string;
     }[];
 }
+
+
 
 // Cria um novo pet
 export async function CreatePet({ nome, especie, dataNascimento, descricao, status, tamanho, peso, personalidade, Foto_Pet }: CreatePetProps): Promise<Pet> {

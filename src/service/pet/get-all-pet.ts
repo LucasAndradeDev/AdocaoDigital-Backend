@@ -38,6 +38,20 @@ export async function GetAllPet(filters: PetFilters): Promise<PetWithAge[]> {
                 ...(pesoMin && { peso: { gte: pesoMin } }), // Filtro para peso mínimo
                 ...(pesoMax && { peso: { lte: pesoMax } }), // Filtro para peso máximo
             },
+            include: {
+                Foto_Pet: true,
+                adocoes: {
+                    include: {
+                        adotante: {
+                            select: {
+                                nome: true,
+                            },
+                        },
+                    },
+                },
+                
+            }
+            
         });
 
         // Adiciona a idade calculada aos pets

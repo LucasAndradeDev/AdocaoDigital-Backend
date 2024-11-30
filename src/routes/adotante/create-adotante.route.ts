@@ -7,9 +7,7 @@ const router = Router();
 
 // Rota para criar um adotante
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-router.post("/", async (req: Request, res: Response): Promise<any> => {
-
-
+router.post("/", async (req: Request, res: Response): Promise<any> => { 
     try {
         // Validação do esquema de criação de adotante
         const createAdotanteSchema = z.object({
@@ -17,15 +15,8 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
             sobrenome: z.string().min(1, 'Sobrenome é obrigatório'),
             email: z.string().email('Email inválido'),
             password: z.string()
-                .min(8, 'A senha deve ter pelo menos 8 caracteres')
-                .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
-                .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula')
-                .regex(/[0-9]/, 'A senha deve conter pelo menos um número')
-                .regex(/[@$!%*?&]/, 'A senha deve conter pelo menos um caractere especial'),
-            telefone: z.string().regex(
-                /^(?:\(\d{2}\)\s?)?\d{5}-\d{4}$/,
-                'Telefone inválido. O formato deve ser (XX) XXXXX-XXXX ou XXXXX-XXXX.'
-            ),
+                .min(8, 'A senha deve ter pelo menos 8 caracteres'),
+            telefone: z.string().min(1, 'Telefone é obrigatório'),
             endereco: z.object({
                 rua: z.string().min(1, 'Rua é obrigatória'),
                 bairro: z.string().min(1, 'Bairro é obrigatório'),
@@ -34,8 +25,30 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
             }),
         });
 
+        const nome = req.body.nome;
+        const sobrenome = req.body.sobrenome;
+        const email = req.body.email;
+        const password = req.body.password;
+        const telefone = req.body.telefone;
+        const { rua, bairro, cidade, numero_residencia } = req.body.endereco;
+
         // Validação dos dados recebidos
-        const { nome, sobrenome, email, password, telefone, endereco } = createAdotanteSchema.parse(req.body);
+        const { endereco } = createAdotanteSchema.parse({
+            nome,
+            sobrenome,
+            email,
+            password,
+            telefone,
+            endereco: {
+                rua,
+                bairro,
+                cidade,
+                numero_residencia,
+            },
+        });
+
+        // Depurar os dados recebidos
+        console.log('Dadaos recebidos:', req.body);
 
         // Cria um novo adotante com endereço
         const adotante = await CreateAdotante({
@@ -54,6 +67,8 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
     } catch (error) {
         // Tratamento para erros de validação do Zod
         if (error instanceof z.ZodError) {
+            // Depurar os erros de validação
+            console.error('Erros de validação:', error.errors);
             // Mapeando erros para mensagens amigáveis
             const formattedErrors = error.errors.map((err) => ({
                 campo: err.path.join('.'),
@@ -68,9 +83,11 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
     
         // Tratamento para outros erros (como duplicação de e-mail)
         if ((error as { code: string }).code === 'P2002') { // Prisma Unique Constraint Error
+            // Depurar o erro de duplicação de e-mail
             return res.status(409).json({
                 error: "O e-mail fornecido já está em uso. Tente novamente com outro.",
             });
+
         }
     
         // Tratamento genérico para outros erros inesperados

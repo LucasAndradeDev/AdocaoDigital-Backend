@@ -17,15 +17,8 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
             sobrenome: z.string().min(1, 'Sobrenome é obrigatório').optional(),
             email: z.string().email('Email inválido').optional(),
             password: z.string()
-                .min(8, 'A senha deve ter pelo menos 8 caracteres')
-                .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
-                .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula')
-                .regex(/[0-9]/, 'A senha deve conter pelo menos um número')
-                .regex(/[@$!%*?&]/, 'A senha deve conter pelo menos um caractere especial').optional(),
-            telefone: z.string().regex(
-                /^(?:\(\d{2}\)\s?)?\d{5}-\d{4}$/,
-                'Telefone inválido. O formato deve ser (XX) XXXXX-XXXX ou XXXXX-XXXX.'
-            ).optional(),
+                .min(8, 'A senha deve ter pelo menos 8 caracteres').optional(),
+            telefone: z.string().optional(),
             endereco: z.object({
                 id: z.string().min(1, 'ID do endereço é obrigatório').optional(),
                 rua: z.string().min(1, 'Rua é obrigatória').optional(),
@@ -34,6 +27,9 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
                 numero_residencia: z.string().min(1, 'Número da residência é obrigatório').optional(),
             }).optional()
         });
+
+        // Depuranção dos dados
+        console.log(req.body);
 
         // Validação dos dados recebidos
         const { id } = req.params;
