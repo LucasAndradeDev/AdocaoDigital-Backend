@@ -61,9 +61,9 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
         });
 
         return res.status(201).json({
-            message: "Adotante criado com sucesso!",
-            adotante,
+            adotante
         });
+
     } catch (error) {
         // Tratamento para erros de validação do Zod
         if (error instanceof z.ZodError) {

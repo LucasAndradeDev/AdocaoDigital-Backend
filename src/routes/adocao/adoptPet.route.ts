@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { z } from "zod";
-import { CreateAdocao } from "../../service/adocao/create-adocao";
+import { CreateAdocao } from "../../service/adocao/adoptPet";
 
 const router = Router();
 

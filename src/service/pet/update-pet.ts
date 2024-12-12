@@ -1,16 +1,36 @@
 // Service para atualizar um pet
 import { prisma } from "../../database/prisma-client"; // Importar o Prisma client
 import type { Pet, StatusPet } from "@prisma/client"; // Importar o tipo Pet do Prisma
+import { calcularTamanho } from "./size-calculation";
+
+// Enum Especie (com base no seu Prisma)
+enum Especie {
+    CACHORRO = "CACHORRO",
+    GATO = "GATO",
+    MACACO = "MACACO",
+    LAGARTO = "LAGARTO",
+    PASSARO = "PASSARO",
+    COELHO = "COELHO",
+    HAMSTER = "HAMSTER",
+    PEIXE = "PEIXE",
+    CAVALO = "CAVALO",
+    PORCO = "PORCO",
+    IGUANA = "IGUANA",
+    SERPENTE = "SERPENTE",
+    TARTARUGA = "TARTARUGA",
+    OVELHA = "OVELHA",
+    GALINHA = "GALINHA",
+    PATO = "PATO",
+}
 
 // Interface para os dados do pet
 interface UpdatePetData {
     id: string;
     nome?: string;
-    especie?: string;
+    especie?: Especie;
     data_nascimento?: Date;
     descricao?: string;
     status?: StatusPet;
-    tamanho?: string;
     peso?: number;
     personalidade?: string;
     Foto_Pet?: { url?: string }[];
@@ -24,7 +44,6 @@ export async function UpdatePet({
     data_nascimento,
     descricao,
     status,
-    tamanho,
     peso,
     personalidade,
     Foto_Pet
@@ -56,6 +75,9 @@ export async function UpdatePet({
         }
     }
 
+    // Verificar se peso e especie foram fornecidos
+    const calcularTamanhoDoPet = peso && especie;
+
     // Atualiza os dados do pet
     const updatedPet = await prisma.pet.update({
         where: {
@@ -67,7 +89,7 @@ export async function UpdatePet({
             data_nascimento,
             descricao,
             status,
-            tamanho,
+            tamanho: calcularTamanhoDoPet ? calcularTamanho(especie, peso) : pet.tamanho, // Atualiza o tamanho somente se peso e especie foram fornecidos
             peso,
             personalidade,
             Foto_Pet: {

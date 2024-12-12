@@ -7,6 +7,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// opções de status
 enum StatusPet {
   DISPONIVEL
   ADOTADO
@@ -19,19 +20,42 @@ enum Tamanho {
   GRANDE
 }
 
+// opções de especie
+enum Especie {
+  CACHORRO
+  GATO
+  MACACO
+  LAGARTO
+  PASSARO
+  COELHO
+  HAMSTER
+  PEIXE
+  CAVALO
+  PORCO
+  IGUANA
+  SERPENTE
+  TARTARUGA
+  OVELHA
+  GALINHA
+  PATO
+}
+
+
 model Pet {
   id              String    @id @default(uuid())
   nome            String
-  especie         String
+  especie         Especie
   data_nascimento DateTime
   descricao       String?
-  tamanho         Tamanho  
-  status          StatusPet  @default(DISPONIVEL) 
+  tamanho         Tamanho  // O tamanho será calculado automaticamente pelo sistema
+  status          StatusPet  @default(DISPONIVEL)
   peso            Float?
   personalidade   String?
   adocoes         Adocao[]  // Relacionamento com Adocao
   Foto_Pet        Foto_Pet[] // Relacionamento com Foto_Pet
 }
+
+
 
 
 model Adotante {

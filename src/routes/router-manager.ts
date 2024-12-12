@@ -16,7 +16,7 @@ import  deletePet from "../routes/pet/delete-pet.route";
 import  updatePet from "../routes/pet/update-pet.route";
 
 // Rotas para adocão
-import  createAdocao from "../routes/adocao/create-adocao.route";
+import  createAdocao from "./adocao/adoptPet.route";
 import  getAdocaoById from "../routes/adocao/get-adocao-by-id.route";
 import  listAdocoes from "../routes/adocao/list-adocoes.route";
 import  deleteAdocao from "../routes/adocao/delete-adocao.route";

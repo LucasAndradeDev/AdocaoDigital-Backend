@@ -5,7 +5,7 @@ import { GetAllPet } from "../../service/pet/get-all-pet"; // Importa a função
 
 const router = Router();
 
-// Definir schema de validação com Zod
+// Definir schema de validação com Zod, todos os campos opcionais pois sao filtros
 const getAllPetSchema = z.object({
     nome: z.string().optional(),
     especie: z.string().optional(),
