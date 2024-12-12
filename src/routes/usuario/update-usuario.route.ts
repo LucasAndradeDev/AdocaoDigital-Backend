@@ -1,18 +1,15 @@
-// Rota para atualizar um adotante
-
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { z } from "zod";
-import { UpdateAdotante } from "../../service/adotante/update-adotante"; // Importa a função de atualização de adotante
+import { UpdateUsuario } from "../../service/usuario/update-usuario"; // Importa a função de atualização de usuario
 
 const router = Router();
 
-// Rota PUT para atualizar um adotante
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// Rota PUT para atualizar um usuário
 router.put("/:id", async (req: Request, res: Response): Promise<any> => {
     try {
         // Schema de validação dos dados
-        const updateAdotanteSchema = z.object({
+        const updateUsuarioSchema = z.object({
             nome: z.string().min(1, 'Nome é obrigatório').optional(),
             sobrenome: z.string().min(1, 'Sobrenome é obrigatório').optional(),
             email: z.string().email('Email inválido').optional(),
@@ -28,15 +25,12 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
             }).optional()
         });
 
-        // Depuranção dos dados
-        console.log(req.body);
-
         // Validação dos dados recebidos
         const { id } = req.params;
-        const { nome, sobrenome, email, password, telefone, endereco } = updateAdotanteSchema.parse(req.body);
+        const { nome, sobrenome, email, password, telefone, endereco } = updateUsuarioSchema.parse(req.body);
 
-        // Atualizar um adotante
-        const adotante = await UpdateAdotante({
+        // Atualizar o usuário
+        const usuario = await UpdateUsuario({
             id,
             nome,
             sobrenome,
@@ -47,7 +41,7 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
         });
 
         return res.status(200).json({
-            adotante
+            usuario
         });
     } catch (error) {
         // Tratamento para erros de validação do Zod
@@ -57,20 +51,20 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
                 campo: err.path.join('.'),
                 mensagem: err.message,
             }));
-    
+
             return res.status(400).json({
                 error: "Dados inválidos, verifique os erros abaixo.",
                 detalhes: formattedErrors,
             });
         }
-    
+
         // Tratamento para outros erros (como duplicação de e-mail)
         if ((error as { code: string }).code === 'P2002') { // Prisma Unique Constraint Error
             return res.status(409).json({
                 error: "O e-mail fornecido já está em uso. Tente novamente com outro.",
             });
         }
-    
+
         // Tratamento genérico para outros erros inesperados
         return res.status(500).json({
             error: "Erro interno no servidor. Por favor, tente novamente mais tarde.",

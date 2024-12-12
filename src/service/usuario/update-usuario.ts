@@ -1,10 +1,9 @@
-// Service para atualizar um adotante
 import { prisma } from "../../database/prisma-client";
-import type { Adotante } from "@prisma/client";
+import type { Usuario } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-// Interface para os dados do adotante
-interface UpdateAdotanteProps {
+// Interface para os dados do usuário
+interface UpdateUsuarioProps {
     id: string;
     nome?: string;
     sobrenome?: string;
@@ -20,8 +19,8 @@ interface UpdateAdotanteProps {
     };
 }
 
-// Função para atualizar um adotante
-export async function UpdateAdotante({
+// Função para atualizar um usuário
+export async function UpdateUsuario({
     id,
     nome,
     sobrenome,
@@ -29,28 +28,28 @@ export async function UpdateAdotante({
     password,
     telefone,
     endereco
-}: UpdateAdotanteProps): Promise<Adotante | null> { // Use o tipo Adotante para o retorno
+}: UpdateUsuarioProps): Promise<Usuario | null> { // Use o tipo Usuario para o retorno
 
-    // Verifica se o ID do adotante existe
-    const adotanteExists = await prisma.adotante.findUnique({
+    // Verifica se o ID do usuário existe
+    const usuarioExists = await prisma.usuario.findUnique({
         where: {
             id
         }
     });
 
-    if (!adotanteExists) {
-        throw new Error("Adotante inexistente, tente novamente");
+    if (!usuarioExists) {
+        throw new Error("Usuário inexistente, tente novamente");
     }
 
     // Verifica se o email existe
     if (email) { // Se o email for fornecido
-        const emailExists = await prisma.adotante.findUnique({ // Verifica se o email existe
+        const emailExists = await prisma.usuario.findUnique({ // Verifica se o email existe
             where: {
                 email
             }
         });
 
-        if (emailExists && emailExists.id !== id) { // Se o dono do email for diferente do adotante atual
+        if (emailExists && emailExists.id !== id) { // Se o dono do email for diferente do usuário atual
             throw new Error("Email já existe, tente novamente");
         }
     }
@@ -78,8 +77,8 @@ export async function UpdateAdotante({
         updateData.password = await bcrypt.hash(password, 10); // Adiciona a senha hash ao objeto de atualização
     }
 
-    // Atualização do adotante
-    const adotante = await prisma.adotante.update({
+    // Atualização do usuário
+    const usuario = await prisma.usuario.update({
         where: {
             id
         },
@@ -101,7 +100,7 @@ export async function UpdateAdotante({
         }
     });
 
-    console.log("Adotante atualizado com sucesso! Dados:", adotante);
+    console.log("Usuário atualizado com sucesso! Dados:", usuario);
 
-    return adotante; // Retorna o adotante atualizado
+    return usuario; // Retorna o usuário atualizado
 }

@@ -1,33 +1,32 @@
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { z } from "zod";
-import { GetAdotante } from "../../service/adotante/get-adotante"; // Importa a função de obter adotante
+import { GetUsuario } from "../../service/usuario/get-usuario"; // Importa a função de obter usuario
 
 const router = Router();
 
-// Rota para obter um adotante
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// Rota para obter um usuário
 router.get("/:id", async (req: Request, res: Response): Promise<any> => {
     try {
         // Schema de validação dos dados
-        const getAdotanteSchema = z.object({
+        const getUsuarioSchema = z.object({
             id: z.string().min(1, 'ID é obrigatório'),
         });
 
         // Validação dos dados recebidos
-        const { id } = getAdotanteSchema.parse(req.params);
+        const { id } = getUsuarioSchema.parse(req.params);
 
-        // Obter um adotante
-        const adotante = await GetAdotante(id);
+        // Obter um usuário
+        const usuario = await GetUsuario(id);
 
-        if (!adotante) {
+        if (!usuario) {
             return res.status(404).json({
-                error: "Adotante não encontrado"    
+                error: "Usuário não encontrado"
             });
         }
 
         return res.status(200).json({
-            "Dados do Adotante": adotante
+            "Dados do Usuário": usuario
         });
     } catch (error) {
         // Tratamento específico para erros de validação do Zod
@@ -39,7 +38,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<any> => {
         }
 
         // Log do erro para debug
-        console.error('Erro ao obter adotante:', error);
+        console.error('Erro ao obter usuário:', error);
 
         return res.status(500).json({
             error: "Erro interno do servidor",

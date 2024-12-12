@@ -1,35 +1,32 @@
-// Rota para deletar um adotante
-
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { z } from "zod";
-import { DeleteAdotante } from "../../service/adotante/delete-adotante"; // Importa a função de deletar adotante
+import { DeleteUsuario } from "../../service/usuario/delete-usuario"; // Importa a função de deletar usuario
 
 const router = Router();
 
-// Rota DELETE para deletar um adotante
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// Rota DELETE para deletar um usuário
 router.delete("/:id", async (req: Request, res: Response): Promise<any> => {
     try {
         // Schema de validação dos dados
-        const deleteAdotanteSchema = z.object({
+        const deleteUsuario = z.object({
             id: z.string().min(1, 'ID é obrigatório'),
         });
 
         // Validação dos dados recebidos
-        const { id } = deleteAdotanteSchema.parse(req.params);
+        const { id } = deleteUsuario.parse(req.params);
 
-        // Deletar um adotante
-        const adotante = await DeleteAdotante(id);
+        // Deletar o usuário
+        const result = await DeleteUsuario(id);
 
-        if (!adotante) {
+        if (!result.success) {
             return res.status(404).json({
-                error: "Adotante não encontrado"    
+                error: result.message, // Mensagem de erro específica
             });
         }
 
         return res.status(200).json({
-            adotante
+            message: result.message, // Retorna a mensagem de sucesso ou falha
         });
     } catch (error) {
         // Tratamento específico para erros de validação do Zod
@@ -41,7 +38,7 @@ router.delete("/:id", async (req: Request, res: Response): Promise<any> => {
         }
 
         // Log do erro para debug
-        console.error('Erro ao deletar adotante:', error);
+        console.error('Erro ao deletar usuário:', error);
 
         return res.status(500).json({
             error: "Erro interno do servidor"

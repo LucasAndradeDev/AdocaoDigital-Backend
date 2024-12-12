@@ -1,16 +1,16 @@
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { z } from "zod";
-import { CreateAdotante } from "../../service/adotante/create-adotante";
+import { CreateUser } from "../../service/usuario/create-usuario";
 
 const router = Router();
 
-// Rota para criar um adotante
+// Rota para criar um usuario
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-router.post("/", async (req: Request, res: Response): Promise<any> => { 
+router.post("/", async (req: Request, res: Response): Promise<any> => {
     try {
-        // Validação do esquema de criação de adotante
-        const createAdotanteSchema = z.object({
+        // Validação do esquema de criação de usuario
+        const createUsuarioSchema = z.object({
             nome: z.string().min(1, 'Nome é obrigatório'),
             sobrenome: z.string().min(1, 'Sobrenome é obrigatório'),
             email: z.string().email('Email inválido'),
@@ -33,7 +33,7 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
         const { rua, bairro, cidade, numero_residencia } = req.body.endereco;
 
         // Validação dos dados recebidos
-        const { endereco } = createAdotanteSchema.parse({
+        const { endereco } = createUsuarioSchema.parse({
             nome,
             sobrenome,
             email,
@@ -50,8 +50,8 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
         // Depurar os dados recebidos
         console.log('Dadaos recebidos:', req.body);
 
-        // Cria um novo adotante com endereço
-        const adotante = await CreateAdotante({
+        // Cria um novo usuario
+        const usuario = await CreateUser({
             nome,
             sobrenome,
             email,
@@ -61,7 +61,7 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
         });
 
         return res.status(201).json({
-            adotante
+            usuario
         });
 
     } catch (error) {
@@ -74,13 +74,13 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
                 campo: err.path.join('.'),
                 mensagem: err.message,
             }));
-    
+
             return res.status(400).json({
                 error: "Dados inválidos, verifique os erros abaixo.",
                 detalhes: formattedErrors,
             });
         }
-    
+
         // Tratamento para outros erros (como duplicação de e-mail)
         if ((error as { code: string }).code === 'P2002') { // Prisma Unique Constraint Error
             // Depurar o erro de duplicação de e-mail
@@ -89,13 +89,13 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
             });
 
         }
-    
+
         // Tratamento genérico para outros erros inesperados
         return res.status(500).json({
             error: "Erro interno no servidor. Por favor, tente novamente mais tarde.",
         });
     }
-    
+
 });
 
 export default router;

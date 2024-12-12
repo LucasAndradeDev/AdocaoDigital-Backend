@@ -1,12 +1,12 @@
 // Definindo o arquivo para centralização das rotas
 import { Router } from "express";
 
-// Rotas dos adotantes
-import  createAdotante from "../routes/adotante/create-adotante.route";
-import  getAdotante from "../routes/adotante/get-adotante.route";
-import  updateAdotante from "../routes/adotante/update-adotante.route";
-import  deleteAdotante from "../routes/adotante/delete-adotante.route";
-import  loginAdotante from "../routes/adotante/login-adotante.route";
+// Rotas dos usuarios
+import  createUsuario from "./usuario/create-usuario.route";
+import  getUsuario from "./usuario/get-usuario.route";
+import  updateUsuario from "./usuario/update-usuario.route";
+import  deleteUsuario from "./usuario/delete-usuario.route";
+import  loginUsuario from "./usuario/login-usuario.route";
 
 // Rotas de pets
 import  createPet from "../routes/pet/create-pet.route";
@@ -23,18 +23,20 @@ import  deleteAdocao from "../routes/adocao/delete-adocao.route";
 import  updateAdocao from "../routes/adocao/update-adocao.route";
 
 
+
+
 const router = Router();
 
 router.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
-// Rotas adotantes
-router.use("/adotante", createAdotante); // Criar um adotante
-router.use("/adotante", getAdotante); // Obter um adotante
-router.use("/adotante", updateAdotante); // Atualizar um adotante
-router.use("/adotante", deleteAdotante); // Deletar um adotante
-router.use("/adotante/login", loginAdotante); // Login de adotante
+// Rotas de usuarios
+router.use("/usuario", createUsuario); // Criar um usuario
+router.use("/usuario", getUsuario); // Obter um usuario
+router.use("/usuario", updateUsuario); // Atualizar um usuario
+router.use("/usuario", deleteUsuario); // Deletar um usuario
+router.use("/usuario/login", loginUsuario); // Login de usuario
 
 // Rotas pets
 router.use("/pet", createPet); // Criar um pet

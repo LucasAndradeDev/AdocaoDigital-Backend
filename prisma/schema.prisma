@@ -7,20 +7,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// opções de status
+// Opções de status
 enum StatusPet {
   DISPONIVEL
   ADOTADO
 }
 
-// Opcões de tamanho
+// Opções de tamanho
 enum Tamanho {
   PEQUENO
   MEDIO
   GRANDE
 }
 
-// opções de especie
+// Opções de espécie
 enum Especie {
   CACHORRO
   GATO
@@ -40,25 +40,24 @@ enum Especie {
   PATO
 }
 
-
 model Pet {
   id              String    @id @default(uuid())
   nome            String
   especie         Especie
   data_nascimento DateTime
   descricao       String?
-  tamanho         Tamanho  // O tamanho será calculado automaticamente pelo sistema
+  tamanho         Tamanho    // O tamanho será calculado automaticamente pelo sistema
   status          StatusPet  @default(DISPONIVEL)
   peso            Float?
   personalidade   String?
-  adocoes         Adocao[]  // Relacionamento com Adocao
+  adocoes         Adocao[]   // Relacionamento com Adocao
   Foto_Pet        Foto_Pet[] // Relacionamento com Foto_Pet
+  responsavel     String     // FK para Usuario
+
+  usuario         Usuario    @relation(fields: [responsavel], references: [id], onDelete: Cascade) // Relacionamento com Usuario
 }
 
-
-
-
-model Adotante {
+model Usuario {
   id             String     @id @default(uuid())
   nome           String
   sobrenome      String
@@ -67,19 +66,21 @@ model Adotante {
   telefone       String
   enderecos      Endereco[] // Relacionamento com Endereco
   adocoes        Adocao[]   // Relacionamento com Adocao
-  data_registro  DateTime   @default(now()) // Data de registro do adotante
-  numero_adocoes Int        @default(0) // Valor padrão inicial como 0. O limite sera 3 adoções por ano.
-}
+  petsAdicionados Pet[]      // Relacionamento com os pets adicionados pelo usuário
 
+  data_registro  DateTime   @default(now()) // Data de registro do usuário
+  numero_adocoes Int        @default(0) // Valor padrão inicial como 0. O limite será 3 adoções por ano.
+}
 
 model Endereco {
   id                 String   @id @default(uuid())
-  adotanteId         String
+  usuarioId          String
   rua                String
   bairro             String
   cidade             String
   numero_residencia  String
-  adotante           Adotante @relation(fields: [adotanteId], references: [id], onDelete: Cascade)
+
+  usuario            Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }
 
 enum StatusAdocao {
@@ -88,21 +89,21 @@ enum StatusAdocao {
   REJEITADA
 }
 
-
 model Adocao {
   id          String         @id @default(uuid())
-  petId       String
-  adotanteId  String
+  petId       String          // FK para pets
+  adotanteId  String          // FK para usuários que queiram adotar um pet
   data_adocao DateTime       @default(now()) // Registro automático da data de adoção
   status      StatusAdocao   @default(PENDENTE) // Status padrão da adoção
-  pet         Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)       // Relacionamento com Pet
-  adotante    Adotante       @relation(fields: [adotanteId], references: [id], onDelete: Cascade)  // Relacionamento com Adotante
-}
 
+  pet         Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)       // Relacionamento com Pet
+  usuario     Usuario        @relation(fields: [adotanteId], references: [id], onDelete: Cascade)  // Relacionamento com Usuario
+}
 
 model Foto_Pet {
   id      String   @id @default(uuid())
   petId   String
   url     String   // URL da foto
+  
   pet     Pet      @relation(fields: [petId], references: [id] , onDelete: Cascade) // Relacionamento com Pet
 }
