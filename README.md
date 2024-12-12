@@ -1,82 +1,84 @@
+# 🐾 Adoção Digital - Sistema de Adoção de Pets
 
-# Adoção Digital - Sistema de Adoção de Pets
+## 📖 Descrição
 
-## Descrição
+**Adoção Digital** é um sistema de adoção de pets criado como parte do curso de Desenvolvimento Full Stack oferecido pela Atlântico. O objetivo principal deste projeto é modernizar e agilizar o processo de adoção de animais em abrigos, conectando pets e adotantes de forma mais rápida e eficiente através de uma aplicação web intuitiva e fácil de usar. 🐶🐱
 
-**Adoção Digital** é um sistema de adoção de pets desenvolvido como parte do curso de Desenvolvimento Full Stack oferecido pela Atlântico. O principal objetivo deste projeto é modernizar e agilizar o processo de adoção de animais em abrigos, permitindo um gerenciamento eficiente de pets e adotantes através de uma aplicação web intuitiva.
+## 🚨 Problema
 
-## Problema
+Abrigos de animais frequentemente enfrentam dificuldades na gestão manual de dados, o que pode gerar atrasos e desorganização. A **Adoção Digital** resolve isso, permitindo que os abrigos gerenciem seus pets e conectem com adotantes de maneira simples e ágil! 🌟
 
-Abrigos de animais frequentemente enfrentam desafios relacionados à gestão manual de informações, o que resulta em atrasos e desorganização. A proposta da aplicação web é facilitar o cadastro de pets disponíveis para adoção e otimizar a conexão com potenciais adotantes, tornando o processo mais acessível e eficiente.
+## 🎯 Objetivo
 
-## Objetivo
+Criar uma aplicação web para facilitar o cadastro e a adoção de animais em abrigos. A plataforma vai oferecer funcionalidades para registrar pets, acompanhar a adoção e conectar adotantes com seus futuros companheiros peludos! 🐕🐈
 
-Desenvolver uma aplicação web funcional que permita aos abrigos gerenciar seus pets e acompanhar o processo de adoção. A aplicação deve incluir funcionalidades para o cadastro e visualização de pets, registro de adotantes e formalização de adoções.
+## 💡 Funcionalidades do Sistema
 
-## Funcionalidades do Sistema
+1. **Cadastro de Pets** 🐾
+   - **Nome do pet**: O nome carinhoso que o pet ganha no abrigo.
+   - **Espécie**: Tipo do pet (cachorro, gato, coelho, etc.).
+   - **Data de nascimento**: Estimativa da data de nascimento.
+   - **Descrição**: Características e necessidades especiais.
+   - **Status**: Indica se o pet está "disponível" ou "adotado".
+   - **Personalidade**: Detalhes sobre o temperamento do pet.
+   - **Fotos do pet**: Imagens fofas para ajudar na escolha! 📸
 
-1. **Cadastro de Pets**
-   - **Nome do pet**: Nome que o pet receberá no abrigo.
-   - **Espécie**: Tipo de animal (cachorro, gato, coelho, etc.).
-   - **Data de nascimento**: Data de nascimento aproximada do pet.
-   - **Descrição**: Texto que descreve a personalidade e possíveis necessidades especiais do pet.
-   - **Status**: Indica se o pet está "disponível" para adoção ou "adotado".
-   - **Personalidade**: Informações adicionais sobre o temperamento do pet.
-   - **Fotos do pet**: Imagens para melhor visualização dos pets disponíveis.
-
-2. **Gerenciamento de Adotantes**
-   - **Nome completo**: Nome do adotante.
+2. **Gerenciamento de Adotantes** 💌
+   - **Nome completo**: Nome do adotante interessado em dar um lar.
    - **E-mail**: Para contato e notificações.
-   - **Telefone**: Para contato direto.
+   - **Telefone**: Para conversa direta.
    - **Endereço**: Local de residência do adotante.
 
-3. **Processo de Adoção**
-   - **Escolha do pet**: O adotante pode selecionar o pet desejado.
-   - **Registro da data de adoção**: Data em que a adoção é formalizada.
-   - **Atualização automática do status do pet**: O status do pet é alterado para "adotado" automaticamente.
+3. **Processo de Adoção** 📝
+   - **Escolha do pet**: O adotante escolhe o pet de sua preferência.
+   - **Registro da data de adoção**: Quando a adoção é confirmada.
+   - **Atualização automática do status do pet**: O status do pet muda para "adotado" após a finalização da adoção. 🎉
 
-4. **Visualização de Pets Disponíveis**
-   - **Lista de pets**: Exibição das informações como nome, espécie, idade e descrição.
-   - **Filtros**: Opções de filtro por espécie, idade ou status para facilitar a busca.
+4. **Visualização de Pets Disponíveis** 🐾
+   - **Lista de pets**: Exibição com informações de nome, espécie, idade e descrição.
+   - **Filtros**: Filtros para facilitar a busca por espécie, idade ou status.
 
-## Requisitos Técnicos
+## 🔧 Requisitos Técnicos
 
 ### Backend
-- **Node.js**: Usado em conjunto com **Express** para a criação de rotas e gerenciamento de requisições.
-- **Prisma ORM**: Facilita as operações no banco de dados.
-- Implementação de operações CRUD (Create, Read, Update, Delete) para gerenciar informações de pets e adotantes.
+- **Node.js**: Usado com **Express** para construção da API e gerenciamento das rotas.
+- **Prisma ORM**: Interage com o banco de dados de forma eficiente e segura.
+- Implementação de CRUD (Create, Read, Update, Delete) para gerenciar pets e adotantes.
 
 ### Banco de Dados
-- Uso de **PostgreSQL** para armazenar informações de pets, adotantes e adoções.
+- **PostgreSQL**: Para armazenar informações dos pets, adotantes e adoções. 🗃️
 
 ### Docker
-- Utilização do Docker para a containerização do PostgreSQL.
+- **Docker**: Containeriza o banco de dados PostgreSQL para facilitar o ambiente de desenvolvimento e produção. 🐳
 
 ### Estrutura Básica do Banco
-- **Pets**: Tabela que armazena informações dos pets (id, nome, espécie, data de nascimento, descrição, status, fotos).
-- **Adotantes**: Tabela que armazena informações dos adotantes (id, nome, email, telefone, endereço).
-- **Adoções**: Tabela que registra as adoções realizadas (id, pet_id, adotante_id, data_adocao).
+- **Pets**: Tabela para armazenar dados dos pets (id, nome, espécie, data de nascimento, descrição, status, fotos).
+- **Adotantes**: Tabela com informações sobre os adotantes (id, nome, email, telefone, endereço).
+- **Adoções**: Tabela que registra as adoções (id, pet_id, adotante_id, data_adocao).
 
 ### Frontend
-- **ReactJS**: Utilizado para criar uma interface amigável e dinâmica para os usuários.
+- **ReactJS**: Para uma interface amigável e interativa para os usuários. 🌐
 
-## Tecnologias Utilizadas
+## 🚀 Tecnologias Utilizadas
 
-- **Backend**:
-  - `Node.js`
-  - `Express`
-  - `Prisma`
-  - `PostgreSQL`
-  - `bcrypt`: Para segurança das senhas.
-  - `jsonwebtoken`: Para autenticação de usuários.
-  - `dotenv`: Para gerenciamento de variáveis de ambiente.
-  - `zod`: Para validação de dados.
+- **Prisma ORM**: Facilita a interação com o banco de dados PostgreSQL, com migrations e modelos de dados bem estruturados.
+- **Express**: Framework para construção de APIs com Node.js.
+- **TypeScript**: Para código mais seguro e fácil de manter. 💻
+- **Zod**: Biblioteca para validação de dados e garantir que tudo seja seguro e correto.
+- **bcrypt**: Para criptografar senhas de forma segura. 🔐
+- **jsonwebtoken**: Geração e verificação de tokens JWT para autenticação e autorização.
+- **dotenv**: Para gerenciar variáveis de ambiente de forma segura.
+- **CORS**: Para permitir a comunicação entre frontend e backend com segurança.
+- **UUID**: Para gerar identificadores únicos universais.
+- **Docker**: Usado para containerizar o banco de dados PostgreSQL, tornando tudo mais consistente. 🐳
+
+---
 
 - **DevDependencies**:
-  - `nodemon`: Para reinicialização automática do servidor.
-  - `typescript` e `tsx`: Para suporte a TypeScript.
+  - `nodemon`: Para reiniciar o servidor automaticamente durante o desenvolvimento.
+  - `typescript` e `tsx`: Suporte a TypeScript, proporcionando uma experiência de codificação mais robusta.
 
-## Instruções para Execução
+## 📋 Instruções para Execução
 
 1. **Clone o repositório**:
    ```bash
